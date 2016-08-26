@@ -15,9 +15,11 @@ Options:
 
 import sys
 import cmd
+import os
 from docopt import docopt, DocoptExit
-from t import ContactManager, add_record, search_record
-from messenger import send_message
+from contact_manager import ContactManager, send_text
+from pyfiglet import Figlet
+from colorama import Fore, Back, Style, init
 
 
 def docopt_cmd(func):
@@ -51,18 +53,24 @@ def docopt_cmd(func):
 
 
 class my_interactive_mode (cmd.Cmd):
+    os.system('cls')
+    init()
+    font = Figlet(font='speed')                             #colossal
+    print(Fore.CYAN + font.renderText('N u n t i u s'))
     intro = 'Interactive Mode'
     prompt = '(Contact_Manager)'
     file = None
 
+    create_new_contact = ContactManager()
+
     def add_contact(self, name, number):
-        add_record(name, number)
+        print  self.create_new_contact.add_record(name, number)
 
     def search(self, name):
-        search_record(name)
+        print self.create_new_contact.search_record(name)
 
     def sms(self, name, message):
-        send_message(name, message)
+        print send_text(name, message)
 
     @docopt_cmd
     def do_add(self, args):
@@ -71,13 +79,13 @@ class my_interactive_mode (cmd.Cmd):
 
     @docopt_cmd
     def do_search(self, args):
-        """Usage: search search <name>"""
+        """Usage: search <name>"""
         self.search(args['<name>'])
 
     @docopt_cmd
     def do_text(self, args):
-        """Usage: text <name> -m <message>..."""
-        self.sms(args['<name>'], (" ".join(args['<message>'])))
+        """Usage: text <name> -m <message>"""
+        self.sms(args['<name>'], args['<message>'])
 
     def do_quit(self, args):
         """Quits Interactive Mode."""
@@ -90,4 +98,3 @@ opt = docopt(__doc__, sys.argv[1:])
 if opt['--interactive']:
     my_interactive_mode().cmdloop()
 print(opt)
-
