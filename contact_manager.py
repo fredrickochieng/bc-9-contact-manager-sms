@@ -7,7 +7,7 @@ class ContactManager(object):
 
 	def __init__(self):
 
-		conn = sqlite3.connect('CM.db')
+		conn = sqlite3.connect('contacts.db')
 		conn.execute('''CREATE TABLE IF NOT EXISTS CONTACTS (
 		ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, 
 		NAME TEXT NOT NULL,
@@ -19,7 +19,7 @@ class ContactManager(object):
 
 
 	def add_record(self, name, number):
-		conn = sqlite3.connect('CM.db')
+		conn = sqlite3.connect('contacts.db')
 		conn.execute("INSERT INTO CONTACTS (NAME, PHONE_NUM)  VALUES ('{}', '{}')" .format(name, number));
 
 		conn.commit()
@@ -29,7 +29,7 @@ class ContactManager(object):
 		
 
 	def search_record(self, name):
-		conn = sqlite3.connect('CM.db')
+		conn = sqlite3.connect('contacts.db')
 		cursor = conn.execute("SELECT * from CONTACTS WHERE NAME='{}'" .format(name));
 		
 		data = cursor.fetchall()
@@ -37,6 +37,7 @@ class ContactManager(object):
 		if not len(data):
 			return 'No contact found with name %s' %name
 		elif len(data) > 1:
+
 			print "Which %s" %name, "?" 
 
 			results = []
@@ -52,7 +53,7 @@ class ContactManager(object):
 
 			choice = input("\nPlease type the number corresponding to the person")
 
-			if choice > len(data)+1 or choice <= 0:
+			if choice > results[len(results)-1][0] or choice <= 0:
 				return 'Invalid selection'
 			else:
 				new_cursor = conn.execute("SELECT NAME from CONTACTS WHERE ID='{}'" .format(choice))
@@ -73,8 +74,9 @@ class ContactManager(object):
 
 		conn.close()
 
+
 def send_text(name, message):
-	conn = sqlite3.connect('CM.db')
+	conn = sqlite3.connect('contacts.db')
 	cursor = conn.execute("SELECT * from CONTACTS WHERE NAME='{}'" .format(name)); 		
 
 	data = cursor.fetchall()
@@ -97,7 +99,7 @@ def send_text(name, message):
 
 		choice = input("\nPlease type the number corresponding to the person")
 
-		if choice > len(data)+1 or choice <= 0:
+		if choice > results[len(results) - 1][0] or choice <= 0:
 			return 'Invalid selection'
 		else:
 			new_cursor = conn.execute("SELECT PHONE_NUM from CONTACTS WHERE ID='{}'" .format(choice))
@@ -105,11 +107,11 @@ def send_text(name, message):
 			theNumber = new_cursor.fetchall()
 			return "\nSending message to %s %d" %(name,theNumber[0][0]) + "..."
 
-			#send_message(theNumber, message)
+			send_message(theNumber, message)
 
 
 	else:
 		to_number = data[0][2]
 		return "\nSending message to %s %d" %(name, to_number)
 
-		#send_message(to_number, message)
+		send_message(to_number, message)
