@@ -44,7 +44,7 @@ class ContactManager(object):
 			for row in data:
 				each_row = []
 				
-				each_row.append(row[0])
+				each_row.append('[' + str(row[0]) + ']')
 				each_row.append(row[1])
 				each_row.append(row[2])
 				results.append(each_row)
@@ -90,7 +90,7 @@ def send_text(name, message):
 		for row in data:
 			each_row = []
 			
-			each_row.append(row[0])
+			each_row.append('[' + str(row[0]) + ']')
 			each_row.append(row[1])
 			each_row.append(row[2])
 			results.append(each_row)
@@ -105,13 +105,13 @@ def send_text(name, message):
 			new_cursor = conn.execute("SELECT PHONE_NUM from CONTACTS WHERE ID='{}'" .format(choice))
 
 			theNumber = new_cursor.fetchall()
-			return "\nSending message to %s %d" %(name,theNumber[0][0]) + "..."
+			print "\nSending message to %s %d" %(name,theNumber[0][0]) + "..."
 
 			send_message(theNumber, message)
 
 
 	else:
 		to_number = data[0][2]
-		return "\nSending message to %s %d" %(name, to_number)
+		print "\nSending message to %s %d" %(name, to_number)
 
 		send_message(to_number, message)
